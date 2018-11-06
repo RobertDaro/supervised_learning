@@ -97,18 +97,19 @@ public class DataFrame
     }
 
     //splits the DataFrame along a given index
+    // returns tail, original keeps prefix
     public DataFrame splitAt(int index)
     {
         ArrayList<DataEntry> tail = new ArrayList<>();
 
-        for(int i = index; i < data.size(); i++)
+        for(int i = index; i < data.size();)
         {
             tail.add(data.get(index));
             data.remove(index);
         }
         data.trimToSize();
 
-        return new DataFrame(labels,targetValueLabel,targetValueIndex,data);
+        return new DataFrame(labels,targetValueLabel,targetValueIndex,tail);
     }
 
     //TODO: Change these strings (and in DataEntry) to String Builders or something. Strings are really slow.
