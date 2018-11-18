@@ -26,7 +26,7 @@ public class DataEntry
     }
 
     //gets the value by label, returns null if not found.
-    public String getValue(String label)
+    public String at(String label)
     {
         for(int i = 0; i < labels.length; i++)
         {

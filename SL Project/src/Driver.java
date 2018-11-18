@@ -1,6 +1,6 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import javax.xml.crypto.Data;
+import java.io.*;
+import java.util.Random;
 
 /**
  * Created by Robert on 10/30/2018.
@@ -9,14 +9,39 @@ import java.io.IOException;
  */
 public class Driver
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         //system arguments
         String fileName = args[0];
         String targetVar = args[1];
-        System.out.println(fileName);
+        String validationResultsFile = args[2];
+        String testingResultsFile =args[3];
 
+        //read in data
+        System.out.println(fileName);
         DataFrame data = readFile(fileName,targetVar);
+
+        //split data into training, validation, testing
+        int validationSplit = data.size() *3/5;
+        int testingSplit = validationSplit + (data.size()/5);
+
+        DataFrame testingData = data.splitAt(testingSplit);
+        DataFrame validationData = data.splitAt(validationSplit);
+
+        //crate and train agent on testing data
+        RandomAgent agent = new RandomAgent();
+        for(int i = 0; i < data.size(); i++ )
+        {
+            agent.learn(data.at(i), targetVar);
+
+        }
+        //test agent over validation data
+        testAgent(agent, validationData,targetVar,
+                validationResultsFile,true);
+        //evaluate training data
+        testAgent(agent, testingData,targetVar,
+                testingResultsFile,false);
+
         System.out.println("Finished reading");
 
     }
@@ -44,5 +69,56 @@ public class Driver
             System.out.println("IO error occured when reading from the file.");
         }
         return null;
+    }
+
+    public static int resultOutput(double result, String answer)
+    {
+        if(result < 0.0 || result > 1.0)
+        {
+            return -500;
+        }
+        else if (result < 0.5 &&
+                (answer.equalsIgnoreCase("failed") || answer.equalsIgnoreCase("canceled")))
+        {
+            return 1;
+        }
+        else if (result > 0.5 && answer.equalsIgnoreCase("successful"))
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public static void testAgent(Agent agent, DataFrame data, String targetVar, String file, Boolean learn)
+    {
+
+        try(PrintWriter writer = new PrintWriter(new BufferedWriter( new FileWriter(file))))
+        {
+
+            for(int i = 0; i < data.size(); i++ )
+            {
+                DataEntry entry =  data.at(i);
+                double result;
+                if (learn)
+                {
+                    result = agent.learn(entry, targetVar);
+                }
+                else
+                {
+                    result = agent.evaluate(entry);
+                }
+
+                String realAns = entry.at(targetVar);
+                writer.println(resultOutput(result, realAns)+",");
+            }
+        }
+        catch(IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
     }
 }
