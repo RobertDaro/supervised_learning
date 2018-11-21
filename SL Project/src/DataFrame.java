@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Robert on 10/30/2018.
+ * Edited by James on 11/20/2018
  *
  * Holds multiple entries, assumes uniform representation across lines
  */
@@ -127,5 +128,9 @@ public class DataFrame
             str = str + "\n" + entry;
         }
         return str;
+    }
+    //getter for target Value's label
+    public String getTargetValueLabel() {
+        return targetValueLabel;
     }
 }

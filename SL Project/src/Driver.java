@@ -4,7 +4,7 @@ import java.util.Random;
 
 /**
  * Created by Robert on 10/30/2018.
- *
+ * Edited by James on 11/20/2018
  * The driver for the program, should theoretically handle everything.
  */
 public class Driver
@@ -32,6 +32,7 @@ public class Driver
         //create our agent
         Agent agent = new RandomAgent();
 
+
         if(agentFlag.equals("n"))
         {
             //make a neural agent
@@ -54,7 +55,7 @@ public class Driver
 
     }
 
-    public static DataFrame readFile(String fileStr, String targetValStr)
+    private static DataFrame readFile(String fileStr, String targetValStr)
     {
         try(BufferedReader reader = new BufferedReader(new FileReader(fileStr)))
         {
@@ -80,6 +81,7 @@ public class Driver
     }
 
 
+
     // Returns 1 if a correct answer was chosen.
     public static int resultOutput(double result, String answer)
     {
@@ -93,7 +95,7 @@ public class Driver
         {
             return 1;
         }
-        else if (result > 0.5 && answer.equalsIgnoreCase("successful"))
+        else if (result >= 0.5 && answer.equalsIgnoreCase("successful"))
         {
             return 1;
         }
