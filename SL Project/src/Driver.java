@@ -50,11 +50,11 @@ public class Driver
         // Training agent
         agent.learn(data, targetVar);
         //test agent over validation data
-//        testAgent(agent, validationData,targetVar,
-//                validationResultsFile,true);
+        testAgent(agent, validationData,targetVar,
+                validationResultsFile,true);
 //        //evaluate testing data
-//        testAgent(agent, testingData,targetVar,
-//                testingResultsFile,false);
+        testAgent(agent, testingData,targetVar,
+                testingResultsFile,false);
 
         System.out.println("Finished reading");
 

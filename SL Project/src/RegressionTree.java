@@ -92,7 +92,7 @@ public class RegressionTree {
 
     }
 
-    //Method for growing the regression tree
+    //Method for determining the attribute to split at
     private  Attribute getBestAttribute(String[] labels, DataFrame data, int depth)
     {
         ArrayList<String> values = data.getAll(labels[depth]);
@@ -112,5 +112,37 @@ public class RegressionTree {
             return new Attribute(avg);
         }
 
+    }
+
+    protected double assess(DataEntry entry)
+    {
+        if(children.size() == 0)
+        {
+            return root.getVal();
+        }
+        else{
+            if(root.getIsClass())
+            {
+                if(Double.parseDouble(entry.at(depth)) == root.getVal())
+                {
+                    return children.get(0).assess(entry);
+                }
+                else
+                {
+                    return children.get(1).assess(entry);
+                }
+            }
+            else
+            {
+                if(Double.parseDouble(entry.at(depth)) < root.getVal())
+                {
+                    return children.get(0).assess(entry);
+                }
+                else
+                {
+                    return  children.get(1).assess(entry);
+                }
+            }
+        }
     }
 }
