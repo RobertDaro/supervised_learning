@@ -4,7 +4,7 @@ import java.util.Random;
 
 /**
  * Created by Robert on 10/30/2018.
- *
+ * Edited by James on 11/20/2018
  * The driver for the program, should theoretically handle everything.
  */
 public class Driver
@@ -28,8 +28,8 @@ public class Driver
         DataFrame testingData = data.splitAt(testingSplit);
         DataFrame validationData = data.splitAt(validationSplit);
 
-        //crate and train agent on testing data
-        RandomAgent agent = new RandomAgent();
+        //crate and train agent on training data
+        TreeAgent agent = new TreeAgent();
         for(int i = 0; i < data.size(); i++ )
         {
             agent.learn(data.at(i), targetVar);
@@ -38,7 +38,7 @@ public class Driver
         //test agent over validation data
         testAgent(agent, validationData,targetVar,
                 validationResultsFile,true);
-        //evaluate training data
+        //evaluate testing data
         testAgent(agent, testingData,targetVar,
                 testingResultsFile,false);
 
@@ -46,7 +46,7 @@ public class Driver
 
     }
 
-    public static DataFrame readFile(String fileStr, String targetValStr)
+    private static DataFrame readFile(String fileStr, String targetValStr)
     {
         try(BufferedReader reader = new BufferedReader(new FileReader(fileStr)))
         {
@@ -71,7 +71,7 @@ public class Driver
         return null;
     }
 
-    public static int resultOutput(double result, String answer)
+    private static int resultOutput(double result, String answer)
     {
         if(result < 0.0 || result > 1.0)
         {
@@ -82,7 +82,7 @@ public class Driver
         {
             return 1;
         }
-        else if (result > 0.5 && answer.equalsIgnoreCase("successful"))
+        else if (result >= 0.5 && answer.equalsIgnoreCase("successful"))
         {
             return 1;
         }
@@ -92,7 +92,7 @@ public class Driver
         }
     }
 
-    public static void testAgent(Agent agent, DataFrame data, String targetVar, String file, Boolean learn)
+    private static void testAgent(Agent agent, DataFrame data, String targetVar, String file, Boolean learn)
     {
 
         try(PrintWriter writer = new PrintWriter(new BufferedWriter( new FileWriter(file))))
