@@ -6,8 +6,8 @@
 public abstract class Agent
 {
 
-    public abstract double learn(DataEntry entry, String targetLabel);
+    public abstract double[] learn(DataFrame data, String targetLabel);
 
-    public abstract double evaluate(DataEntry entry);
+    public abstract double[] evaluate(DataFrame data);
 
 }

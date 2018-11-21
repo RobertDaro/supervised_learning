@@ -6,14 +6,24 @@
 public class RandomAgent extends Agent
 {
     @Override
-    public double learn(DataEntry entry, String targetLabel)
+    public double[] learn(DataFrame data, String targetLabel)
     {
-        return Math.random();
+        double [] resultVals = new double[data.size()];
+        for (int i = 0; i < resultVals.length; i++)
+        {
+            resultVals[i] = Math.random();
+        }
+        return resultVals;
     }
 
     @Override
-    public double evaluate(DataEntry entry)
+    public double[] evaluate(DataFrame data)
     {
-        return Math.random();
+        double [] resultVals = new double[data.size()];
+        for (int i = 0; i < resultVals.length; i++)
+        {
+            resultVals[i] = Math.random();
+        }
+        return resultVals;
     }
 }

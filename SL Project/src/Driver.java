@@ -15,7 +15,8 @@ public class Driver
         String fileName = args[0];
         String targetVar = args[1];
         String validationResultsFile = args[2];
-        String testingResultsFile =args[3];
+        String testingResultsFile = args[3];
+        String agentFlag = args[4]; //"n" for neural net, else random
 
         //read in data
         System.out.println(fileName);
@@ -28,17 +29,24 @@ public class Driver
         DataFrame testingData = data.splitAt(testingSplit);
         DataFrame validationData = data.splitAt(validationSplit);
 
-        //crate and train agent on testing data
-        RandomAgent agent = new RandomAgent();
-        for(int i = 0; i < data.size(); i++ )
-        {
-            agent.learn(data.at(i), targetVar);
+        //create our agent
+        Agent agent = new RandomAgent();
 
+        if(agentFlag.equals("n"))
+        {
+            //make a neural agent
         }
+        else
+        {
+            //fine as is!
+        }
+
+        // Training agent
+        agent.learn(data, targetVar);
         //test agent over validation data
         testAgent(agent, validationData,targetVar,
                 validationResultsFile,true);
-        //evaluate training data
+        //evaluate testing data
         testAgent(agent, testingData,targetVar,
                 testingResultsFile,false);
 
@@ -71,8 +79,11 @@ public class Driver
         return null;
     }
 
+
+    // Returns 1 if a correct answer was chosen.
     public static int resultOutput(double result, String answer)
     {
+        // This should not happen
         if(result < 0.0 || result > 1.0)
         {
             return -500;
@@ -92,27 +103,39 @@ public class Driver
         }
     }
 
+    //Test the agent on stuff
     public static void testAgent(Agent agent, DataFrame data, String targetVar, String file, Boolean learn)
     {
+        double[] results;
+
+        if(learn)
+        {
+            results = agent.learn(data, targetVar);
+        }
+        else
+        {
+            results = agent.evaluate(data);
+        }
 
         try(PrintWriter writer = new PrintWriter(new BufferedWriter( new FileWriter(file))))
         {
-
+            writer.println("true_answer,agent_answer");
             for(int i = 0; i < data.size(); i++ )
             {
                 DataEntry entry =  data.at(i);
-                double result;
-                if (learn)
+                double result = results[i];
+                String answer = entry.at(targetVar);
+                double realAns;
+                if(answer.equalsIgnoreCase("failed") || answer.equalsIgnoreCase("canceled"))
                 {
-                    result = agent.learn(entry, targetVar);
+                    realAns = 0.0;
                 }
                 else
                 {
-                    result = agent.evaluate(entry);
+                    realAns = 1.0;
                 }
 
-                String realAns = entry.at(targetVar);
-                writer.println(resultOutput(result, realAns)+",");
+                writer.println("" + realAns +"," + result);
             }
         }
         catch(IOException e)
