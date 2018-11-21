@@ -16,7 +16,7 @@ public class Driver
         String targetVar = args[1];
         String validationResultsFile = args[2];
         String testingResultsFile = args[3];
-        String agentFlag = args[4]; //"n" for neural net, else random
+        String agentFlag = args[4]; //"n" for neural net, "t" for tree, else random
 
         //read in data
         System.out.println(fileName);
@@ -37,6 +37,11 @@ public class Driver
         {
             //make a neural agent
         }
+        else if(agentFlag.equals("t"))
+        {
+            //make a tree agent
+            agent = new TreeAgent();
+        }
         else
         {
             //fine as is!
@@ -45,11 +50,11 @@ public class Driver
         // Training agent
         agent.learn(data, targetVar);
         //test agent over validation data
-        testAgent(agent, validationData,targetVar,
-                validationResultsFile,true);
-        //evaluate testing data
-        testAgent(agent, testingData,targetVar,
-                testingResultsFile,false);
+//        testAgent(agent, validationData,targetVar,
+//                validationResultsFile,true);
+//        //evaluate testing data
+//        testAgent(agent, testingData,targetVar,
+//                testingResultsFile,false);
 
         System.out.println("Finished reading");
 

@@ -130,7 +130,25 @@ public class DataFrame
         return str;
     }
     //getter for target Value's label
-    public String getTargetValueLabel() {
+    public String getTargetLabel() {
         return targetValueLabel;
+    }
+
+    //getter for labels
+    public String[] getLabels() {
+        return labels;
+    }
+    public String getLabelsAsString(){
+        if (labels.length < 1)
+        {
+            return "";
+        }
+        StringBuilder ans = new StringBuilder();
+        ans.append(labels[0]);
+        for (int i = 1; i < labels.length; i++)
+        {
+            ans.append(","); ans.append(labels[i]);
+        }
+        return ans.toString();
     }
 }
