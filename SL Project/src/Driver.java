@@ -35,6 +35,7 @@ public class Driver
         if(agentFlag.equals("n"))
         {
             //make a neural agent
+            agent = new NeuralNetAgent();
         }
         else
         {
