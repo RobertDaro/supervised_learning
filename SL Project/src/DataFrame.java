@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Robert on 10/30/2018.
+ * Edited by James on 11/20/2018
  *
  * Holds multiple entries, assumes uniform representation across lines
  */
@@ -75,7 +76,6 @@ public class DataFrame
         {
             return resultList;
         }
-
         for(DataEntry entry : data)
         {
             resultList.add(entry.at(index));
@@ -127,5 +127,27 @@ public class DataFrame
             str = str + "\n" + entry;
         }
         return str;
+    }
+    //getter for target Value's label
+    public String getTargetLabel() {
+        return targetValueLabel;
+    }
+
+    //getter for labels
+    public String[] getLabels() {
+        return labels;
+    }
+    public String getLabelsAsString(){
+        if (labels.length < 1)
+        {
+            return "";
+        }
+        StringBuilder ans = new StringBuilder();
+        ans.append(labels[0]);
+        for (int i = 1; i < labels.length; i++)
+        {
+            ans.append(","); ans.append(labels[i]);
+        }
+        return ans.toString();
     }
 }

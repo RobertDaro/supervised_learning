@@ -4,7 +4,7 @@ import java.util.Random;
 
 /**
  * Created by Robert on 10/30/2018.
- *
+ * Edited by James on 11/20/2018
  * The driver for the program, should theoretically handle everything.
  */
 public class Driver
@@ -16,7 +16,7 @@ public class Driver
         String targetVar = args[1];
         String validationResultsFile = args[2];
         String testingResultsFile = args[3];
-        String agentFlag = args[4]; //"n" for neural net, else random
+        String agentFlag = args[4]; //"n" for neural net, "t" for tree, else random
 
         //read in data
         System.out.println(fileName);
@@ -32,10 +32,22 @@ public class Driver
         //create our agent
         Agent agent = new RandomAgent();
 
+
         if(agentFlag.equals("n"))
         {
             //make a neural agent
             agent = new NeuralNetAgent();
+        }
+        else if(agentFlag.equals("t"))
+        {
+            //make a tree agent
+            agent = new TreeAgent();
+        }
+        else if(agentFlag.equals("f"))
+        {
+            int numTrees = Integer.parseInt(args[5]);
+            agent = new ForestAgent();
+            ((ForestAgent) agent).setNumTrees(numTrees);
         }
         else
         {
@@ -47,7 +59,7 @@ public class Driver
         //test agent over validation data
         testAgent(agent, validationData,targetVar,
                 validationResultsFile,true);
-        //evaluate testing data
+//        //evaluate testing data
         testAgent(agent, testingData,targetVar,
                 testingResultsFile,false);
 
@@ -55,7 +67,7 @@ public class Driver
 
     }
 
-    public static DataFrame readFile(String fileStr, String targetValStr)
+    private static DataFrame readFile(String fileStr, String targetValStr)
     {
         try(BufferedReader reader = new BufferedReader(new FileReader(fileStr)))
         {
@@ -81,6 +93,7 @@ public class Driver
     }
 
 
+
     // Returns 1 if a correct answer was chosen.
     public static int resultOutput(double result, String answer)
     {
@@ -94,7 +107,7 @@ public class Driver
         {
             return 1;
         }
-        else if (result > 0.5 && answer.equalsIgnoreCase("successful"))
+        else if (result >= 0.5 && answer.equalsIgnoreCase("successful"))
         {
             return 1;
         }
@@ -120,6 +133,7 @@ public class Driver
 
         try(PrintWriter writer = new PrintWriter(new BufferedWriter( new FileWriter(file))))
         {
+            double acc = 0;
             writer.println("true_answer,agent_answer");
             for(int i = 0; i < data.size(); i++ )
             {
@@ -136,8 +150,18 @@ public class Driver
                     realAns = 1.0;
                 }
 
+                if(result < 0.5 && realAns == 0
+                || result >= 0.5 && realAns == 1)
+                {
+                    acc += 1;
+                }
+
                 writer.println("" + realAns +"," + result);
+
+
             }
+            acc = acc / data.size();
+            System.out.println(acc);
         }
         catch(IOException e)
         {

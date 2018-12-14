@@ -45,7 +45,7 @@ public class DataEntry
         String str = "";
         for(int i = 0; i < values.length - 1; i++)
         {
-            str = str + values[i] +", ";
+            str = str + values[i] +",";
         }
         str = str + values[values.length-1];
 
