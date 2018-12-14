@@ -20,24 +20,24 @@ public class NeuralNetAgent extends Agent
 
     public NeuralNetAgent()
     {
-        super();
-        //for now, 3 nodes
-        ArrayList<Node> nodes = new ArrayList<>();
-        input1 = new InputNode(new WeightedSumFunction(), new TanhActivation());
-        nodes.add(input1);
-        input2 = new InputNode(new WeightedSumFunction(), new TanhActivation());
-        nodes.add(input2);
-        input3 = new InputNode(new WeightedSumFunction(), new TanhActivation());
-        nodes.add(input3);
-        Layer inputLayer = new Layer(nodes);
-
-        ArrayList<Node> nodes2 = new ArrayList<>();
-        nodes2.add(new Node(new WeightedSumFunction(), new TanhActivation()));
-        nodes2.add(new Node(new WeightedSumFunction(), new TanhActivation()));
-        Layer outputLayer = new Layer(nodes2);
-
-        int[] arr = {4};
-        net = NetMaker.makeNet(inputLayer,outputLayer,new WeightedSumFunction(), new TanhActivation(), arr);
+//        super();
+//        //for now, 3 nodes
+//        ArrayList<Node> nodes = new ArrayList<>();
+//        input1 = new InputNode(new WeightedSumFunction(), new TanhActivation());
+//        nodes.add(input1);
+//        input2 = new InputNode(new WeightedSumFunction(), new TanhActivation());
+//        nodes.add(input2);
+//        input3 = new InputNode(new WeightedSumFunction(), new TanhActivation());
+//        nodes.add(input3);
+//        Layer inputLayer = new Layer(nodes);
+//
+//        ArrayList<Node> nodes2 = new ArrayList<>();
+//        nodes2.add(new Node(new WeightedSumFunction(), new TanhActivation()));
+//        nodes2.add(new Node(new WeightedSumFunction(), new TanhActivation()));
+//        Layer outputLayer = new Layer(nodes2);
+//
+//        int[] arr = {4};
+//        net = NetMaker.makeNet(inputLayer,outputLayer,new WeightedSumFunction(), new TanhActivation(), arr);
     }
 
     @Override
