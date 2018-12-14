@@ -6,13 +6,13 @@ import java.util.ArrayList;
 /**
  * Created by James on 11/20/2018.
  *
- * This agent uses a decision tree to learn to predict probability of success
+ * This agent uses multple decision trees to learn to predict probability of success
  */
-public class TreeAgent extends Agent
+public class ForestAgent extends Agent
 {
-    private RegressionTree tree;
+    private ArrayList<RegressionTree> trees = new ArrayList<>();
     private DataFrame learnedData;
-
+    private int numTrees;
     @Override
     public double[] learn(DataFrame data, String targetLabel)
     {
@@ -29,12 +29,31 @@ public class TreeAgent extends Agent
                 learnedData.addEntry(proData.at(i).toString());
             }
         }
-         tree = new RegressionTree(learnedData, learnedData.getLabels(),1, 0);
 
-        double[] output = new double[data.size()];
-        for (int i = 0; i < proData.size(); i++)
+        int index;
+        for( int i = 0; i < numTrees; i++)
         {
-            output[i] = tree.assess(proData.at(i));
+            DataFrame tempFrame = new DataFrame(learnedData.getLabelsAsString(), learnedData.getTargetLabel());
+            for(int j = 0; j < data.size(); j++)
+            {
+                 index = (int)(Math.random() * learnedData.size());
+                 tempFrame.addEntry(learnedData.at(index).toString());
+            }
+            trees.add(new RegressionTree(tempFrame,tempFrame.getLabels() , 0, 0));
+        }
+        double[] output = new double[learnedData.size()];
+        for (int i = 0; i < learnedData.size(); i++)
+        {
+            DataEntry tempEntry = learnedData.at(i);
+            double sum = 0;
+           for(int j = 0 ; j < trees.size(); j++)
+           {
+            sum += trees.get(j).assess(tempEntry);
+
+           }
+           sum = sum / trees.size();
+           output[i] = sum;
+
         }
         return output;
 
@@ -50,7 +69,14 @@ public class TreeAgent extends Agent
 
         for (int i = 0; i < proData.size(); i++)
         {
-            output[i] = tree.assess(proData.at(i));
+            DataEntry tempEntry = proData.at(i);
+            double sum = 0;
+            for(int j = 0 ; j < trees.size(); j++)
+            {
+                sum += trees.get(j).assess(tempEntry) / trees.size();
+
+            }
+            output[i] = sum;
         }
         return output;
     }
@@ -112,5 +138,9 @@ public class TreeAgent extends Agent
         }
 
         return proData;
+    }
+
+    protected void setNumTrees(int numTrees) {
+        this.numTrees = numTrees;
     }
 }

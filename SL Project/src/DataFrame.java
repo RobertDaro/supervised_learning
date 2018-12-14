@@ -76,7 +76,6 @@ public class DataFrame
         {
             return resultList;
         }
-
         for(DataEntry entry : data)
         {
             resultList.add(entry.at(index));

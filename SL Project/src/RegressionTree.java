@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class RegressionTree {
     private Attribute root;
-    private String rootLabel;
     private ArrayList<RegressionTree> children;
     private int depth;
     protected RegressionTree(){
@@ -16,42 +15,46 @@ public class RegressionTree {
         children= new ArrayList<>();
         depth = 0;
     }
-    public RegressionTree(double val)
+    public RegressionTree(double val, int index)
     {
-        root = new Attribute(val);
+        root = new Attribute(val, index);
         children= new ArrayList<>();
         depth = 0;
     }
-
+    //Method for tree creation
     protected RegressionTree(DataFrame data, String[] labels, double defaultVal, int depth){
         children = new ArrayList<>();
         this.depth = depth;
-        if(data.size()==0 || labels.length == 0)
+        ArrayList<String> realAns = data.getAll(labels[6]);
+        double ExpVal = 0;
+        for(int i = 0; i < realAns.size();i++)
         {
-            root = new Attribute(defaultVal);
+            ExpVal += Double.parseDouble(realAns.get(i));
         }
-        else if(!data.getAll(data.getTargetLabel()).contains("successful"))
+        ExpVal = ExpVal / realAns.size();
+        ArrayList<String> results = data.getAll(data.getTargetLabel());
+        //If no data, give node default val
+        if(data.size()==0)
         {
-            root = new Attribute(0);
+            root = new Attribute(ExpVal, 6);
         }
-        else if(!data.getAll(data.getTargetLabel()).contains("failed") && !data.getAll(data.getTargetLabel()).contains("canceled"))
+        //if given no successful entries, have 0 as result
+        else if(!results.contains("1.0"))
         {
-            root = new Attribute(1);
+            root = new Attribute(0, 6);
         }
-        else if (depth > 5)
+        else if(!results.contains("0.0"))
         {
-            ArrayList<String> realAns = data.getAll(labels[labels.length-1]);
-            double ExpVal = 0;
-            for(int i = 0; i < realAns.size();i++)
-            {
-                ExpVal += Double.parseDouble(realAns.get(i));
-            }
-            ExpVal = ExpVal / realAns.size();
-            root = new Attribute(ExpVal);
+            root = new Attribute(1, 6);
+        }
+        else if (depth > 4)
+        {
+
+            root = new Attribute(ExpVal, 6);
         }
         else
         {
-            root = getBestAttribute(labels, data, depth);
+            root = getAttribute(labels, data);
             DataFrame leftChildData = new DataFrame(data.getLabelsAsString(), data.getTargetLabel());
             DataFrame rightChildData = new DataFrame(data.getLabelsAsString(), data.getTargetLabel());
             if(root.getIsClass())
@@ -59,7 +62,7 @@ public class RegressionTree {
                 for(int i = 0; i < data.size(); i++)
                 {
                     DataEntry entry = data.at(i);
-                    if(Double.parseDouble(entry.at(depth)) == (root.getVal()))
+                    if(Double.parseDouble(entry.at(root.getTargetIndex())) == (root.getVal()))
                     {
                         leftChildData.addEntry(entry.toString());
                     }
@@ -74,7 +77,7 @@ public class RegressionTree {
                 for(int i = 0; i < data.size(); i++)
                 {
                     DataEntry entry = data.at(i);
-                    if(( Double.parseDouble(entry.at(depth)) <= (root.getVal())))
+                    if(( Double.parseDouble(entry.at(root.getTargetIndex())) <= (root.getVal())))
                     {
                         leftChildData.addEntry(entry.toString());
                     }
@@ -85,31 +88,33 @@ public class RegressionTree {
                 }
 
             }
-            children.add(new RegressionTree(leftChildData, labels, root.getVal(), depth+1));
-            children.add(new RegressionTree(rightChildData, labels, root.getVal(), depth+1));
+            children.add(new RegressionTree(leftChildData, labels, ExpVal, depth+1));
+            children.add(new RegressionTree(rightChildData, labels, ExpVal, depth+1));
 
         }
 
     }
 
     //Method for determining the attribute to split at
-    private  Attribute getBestAttribute(String[] labels, DataFrame data, int depth)
+    private  Attribute getAttribute(String[] labels, DataFrame data)
     {
-        ArrayList<String> values = data.getAll(labels[depth]);
-        if(depth == 0 || depth == 1 || depth == 2 || depth == 5)
+        int pick = (int)Math.round(Math.random() * (5));
+//        int pick = 4;
+        ArrayList<String> values = data.getAll(labels[pick]);
+        if(pick == 0 || pick == 1 || pick == 2 || pick == 5)
         {
-
-            return new Attribute(Double.parseDouble(values.get(0)), true);
+            int pivot = (int)(Math.random() * values.size());
+            return new Attribute(Double.parseDouble(values.get(pivot)), pick,true);
         }
         else
         {
             double avg = 0;
             for(String s : values)
             {
-                avg += Double.parseDouble(s);
+                avg += Double.parseDouble(s); // / values.size());
             }
             avg = avg / values.size();
-            return new Attribute(avg);
+            return new Attribute(avg, pick);
         }
 
     }
@@ -123,7 +128,7 @@ public class RegressionTree {
         else{
             if(root.getIsClass())
             {
-                if(Double.parseDouble(entry.at(depth)) == root.getVal())
+                if(Double.parseDouble(entry.at(root.getTargetIndex())) == root.getVal())
                 {
                     return children.get(0).assess(entry);
                 }
@@ -134,7 +139,7 @@ public class RegressionTree {
             }
             else
             {
-                if(Double.parseDouble(entry.at(depth)) < root.getVal())
+                if(Double.parseDouble(entry.at(root.getTargetIndex())) < root.getVal())
                 {
                     return children.get(0).assess(entry);
                 }

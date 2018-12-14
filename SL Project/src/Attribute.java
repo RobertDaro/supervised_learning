@@ -6,18 +6,21 @@
 public class Attribute {
     private double val;
     private boolean isClass;
+    private int targetIndex;
 
     public Attribute(){
 
     }
-    public Attribute(double value){
+    public Attribute(double value, int index){
         val = value;
         isClass = false;
+        targetIndex = index;
     }
-    public Attribute(double value, boolean isClass)
+    public Attribute(double value, int index, boolean isClass)
     {
         val = value;
         this.isClass = isClass;
+        targetIndex = index;
     }
 
     public double getVal()
@@ -28,5 +31,8 @@ public class Attribute {
     {
         return  isClass;
     }
-
+    public int getTargetIndex()
+    {
+        return targetIndex;
+    }
 }

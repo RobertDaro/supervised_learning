@@ -42,6 +42,12 @@ public class Driver
             //make a tree agent
             agent = new TreeAgent();
         }
+        else if(agentFlag.equals("f"))
+        {
+            int numTrees = Integer.parseInt(args[5]);
+            agent = new ForestAgent();
+            ((ForestAgent) agent).setNumTrees(numTrees);
+        }
         else
         {
             //fine as is!
@@ -126,6 +132,7 @@ public class Driver
 
         try(PrintWriter writer = new PrintWriter(new BufferedWriter( new FileWriter(file))))
         {
+            double acc = 0;
             writer.println("true_answer,agent_answer");
             for(int i = 0; i < data.size(); i++ )
             {
@@ -142,8 +149,18 @@ public class Driver
                     realAns = 1.0;
                 }
 
+                if(result < 0.5 && realAns == 0
+                || result >= 0.5 && realAns == 1)
+                {
+                    acc += 1;
+                }
+
                 writer.println("" + realAns +"," + result);
+
+
             }
+            acc = acc / data.size();
+            System.out.println(acc);
         }
         catch(IOException e)
         {
